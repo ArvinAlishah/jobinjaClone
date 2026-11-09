@@ -2,23 +2,26 @@
 
 public class GetJobSeekerResponseDto
 {
-    public BasicDataDto BasicData { get; set; } = null!;
-    public PersonalDto Personal { get; set; } = null!;
+    public BasicDataDto? BasicData { get; set; }
+    public PersonalDto? Personal { get; set; }
+
     public string? About { get; set; }
+
     public List<SkillDto> Skills { get; set; } = new();
     public List<ExperienceDto> Experiences { get; set; } = new();
     public List<EducationDto> Educations { get; set; } = new();
     public List<LanguageDto> Languages { get; set; } = new();
+
     public PreferenceDto? Preference { get; set; }
     public ResumeDto? Resume { get; set; }
 }
 
 public class BasicDataDto
 {
-    public string FirstName { get; set; } = null!;
-    public string LastName { get; set; } = null!;
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? WorkingStatus { get; set; }
     public string? JobTitle { get; set; }
-    public string? AvatarUrl { get; set; }
 }
 
 public class PersonalDto
@@ -28,8 +31,7 @@ public class PersonalDto
     public string? MilitaryStatus { get; set; }
     public string? Mobile { get; set; }
     public string? BirthDay { get; set; }
-    public int? ProvinceId { get; set; }
-    public int? ProvinceName { get; set; }
+    public string? ProvinceName { get; set; }
 }
 
 public class SkillDto
@@ -72,16 +74,16 @@ public class LanguageDto
 
 public class PreferenceDto
 {
-    public List<int> PrefersContact { get; set; } = new();
-    public List<int> SeniorityLevel { get; set; } = new();
-    public List<int> JobCategories { get; set; } = new();
-    public List<int> Province { get; set; } = new();
-    public List<int> Benefits { get; set; } = new();
+    public List<string> PrefersContact { get; set; } = new();
+    public List<string> SeniorityLevel { get; set; } = new();
+    public List<string> JobCategories { get; set; } = new();
+    public List<string> Province { get; set; } = new();
+    public List<string> Benefits { get; set; } = new();
     public string? ExpectedSalary { get; set; }
 }
 
 public class ResumeDto
 {
-    public string Url { get; set; } = null!;
-    public bool IsPublic { get; set; }
+    public string? Url { get; set; }
+    public bool? IsPublic { get; set; }
 }

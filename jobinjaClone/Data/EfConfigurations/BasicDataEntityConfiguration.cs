@@ -15,6 +15,8 @@ public class BasicDataEntityConfiguration : IEntityTypeConfiguration<BasicData>
 
         builder.Property(x => x.JobTitel).HasMaxLength(30).IsRequired();
 
+        builder.Property(x => x.WorkingStatus).IsRequired();
+
         builder.HasOne(x => x.JobSeeker)
             .WithOne(x => x.BasicData)
               .HasForeignKey<BasicData>(x => x.JobSeekerId);

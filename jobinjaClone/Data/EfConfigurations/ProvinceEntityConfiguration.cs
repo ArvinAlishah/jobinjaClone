@@ -14,7 +14,7 @@ public class ProvinceEntityConfiguration : IEntityTypeConfiguration<Province>
 
         builder.Property(x => x.Name).IsRequired().HasMaxLength(20);
 
-        builder.HasMany(x=>x.JobSeekers)
+        builder.HasMany(x=>x.Personal)
             .WithOne(x=>x.Province)
              .HasForeignKey(x=>x.ProvinceId)
                 .OnDelete(DeleteBehavior.Restrict);

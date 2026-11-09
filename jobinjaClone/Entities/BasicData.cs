@@ -1,4 +1,6 @@
-﻿namespace jobinjaClone.Entities
+﻿using jobinjaClone.Enums;
+
+namespace jobinjaClone.Entities
 {
     public class BasicData : BaseEntity
     {
@@ -7,6 +9,7 @@
 
         public string JobTitel { get; set; } = null!;
 
+        public WorkingStatusEnum WorkingStatus { get; set; }
         public int JobSeekerId { get; set; }
 
         public JobSeeker JobSeeker { get; set; } = null!;
