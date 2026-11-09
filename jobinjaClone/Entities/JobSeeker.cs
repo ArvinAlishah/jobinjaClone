@@ -26,6 +26,9 @@ namespace jobinjaClone.Entities
         
         public List<Skills> Skills { get; set; } = null!;
         public List<Experience> Experiences { get; set; } = null!;
+        public List<Education> Education { get; set; } = null!;
+
+        public List<Language> Languages { get; set; } = null!;
 
     }
 }
