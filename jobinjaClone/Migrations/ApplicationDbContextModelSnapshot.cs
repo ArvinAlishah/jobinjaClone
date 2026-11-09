@@ -283,11 +283,6 @@ namespace jobinjaClone.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -312,22 +307,18 @@ namespace jobinjaClone.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<int>("ProvinceId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProvinceId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("JobSeekers", (string)null);
                 });
@@ -432,15 +423,16 @@ namespace jobinjaClone.Migrations
             modelBuilder.Entity("jobinjaClone.Entities.Resume", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsPublic")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<int>("JobSeekerId")
                         .HasColumnType("int");
@@ -452,10 +444,36 @@ namespace jobinjaClone.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Url")
+                    b.HasIndex("JobSeekerId")
                         .IsUnique();
 
                     b.ToTable("Resumes", (string)null);
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role", (string)null);
                 });
 
             modelBuilder.Entity("jobinjaClone.Entities.SeniorityLevel", b =>
@@ -497,6 +515,58 @@ namespace jobinjaClone.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Skills", (string)null);
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("username")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("User", (string)null);
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.UserRole", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRole", (string)null);
                 });
 
             modelBuilder.Entity("BenefitsPreference", b =>
@@ -619,7 +689,15 @@ namespace jobinjaClone.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("jobinjaClone.Entities.User", "User")
+                        .WithOne()
+                        .HasForeignKey("jobinjaClone.Entities.JobSeeker", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Province");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("jobinjaClone.Entities.Language", b =>
@@ -648,11 +726,30 @@ namespace jobinjaClone.Migrations
                 {
                     b.HasOne("jobinjaClone.Entities.JobSeeker", "JobSeeker")
                         .WithOne("Resume")
-                        .HasForeignKey("jobinjaClone.Entities.Resume", "Id")
+                        .HasForeignKey("jobinjaClone.Entities.Resume", "JobSeekerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("JobSeeker");
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.UserRole", b =>
+                {
+                    b.HasOne("jobinjaClone.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("jobinjaClone.Entities.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("jobinjaClone.Entities.JobSeeker", b =>
@@ -673,6 +770,16 @@ namespace jobinjaClone.Migrations
             modelBuilder.Entity("jobinjaClone.Entities.Province", b =>
                 {
                     b.Navigation("JobSeekers");
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.Role", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.User", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

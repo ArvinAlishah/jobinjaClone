@@ -12,8 +12,7 @@ public class ResumeEntityConfiguration : IEntityTypeConfiguration<Resume>
 
         builder.Property(x => x.Url).IsRequired().HasMaxLength(100);
 
-        builder.HasIndex(x => x.Url).IsUnique();
 
-        builder.Property(x => x.IsPublic).HasDefaultValue(true);
+        builder.Property(x => x.IsPublic);
     }
 }

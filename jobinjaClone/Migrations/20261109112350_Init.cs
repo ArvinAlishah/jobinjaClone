@@ -68,6 +68,21 @@ namespace jobinjaClone.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Role",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Role", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SeniorityLevels",
                 columns: table => new
                 {
@@ -96,6 +111,22 @@ namespace jobinjaClone.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    username = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "JobSeekers",
                 columns: table => new
                 {
@@ -104,14 +135,12 @@ namespace jobinjaClone.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Mobile = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     BirthDay = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     About = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
                     MarriageStatus = table.Column<int>(type: "int", nullable: false),
                     MiliteryStatus = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     ProvinceId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -124,6 +153,38 @@ namespace jobinjaClone.Migrations
                         principalTable: "Provinces",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_JobSeekers_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRole",
+                columns: table => new
+                {
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRole", x => x.RoleId);
+                    table.ForeignKey(
+                        name: "FK_UserRole_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRole_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -253,18 +314,19 @@ namespace jobinjaClone.Migrations
                 name: "Resumes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     JobSeekerId = table.Column<int>(type: "int", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Resumes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Resumes_JobSeekers_Id",
-                        column: x => x.Id,
+                        name: "FK_Resumes_JobSeekers_JobSeekerId",
+                        column: x => x.JobSeekerId,
                         principalTable: "JobSeekers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -416,6 +478,12 @@ namespace jobinjaClone.Migrations
                 column: "ProvinceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_JobSeekers_UserId",
+                table: "JobSeekers",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_JobSeekerSkills_SkillsId",
                 table: "JobSeekerSkills",
                 column: "SkillsId");
@@ -447,10 +515,15 @@ namespace jobinjaClone.Migrations
                 column: "SeniorityLevelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Resumes_Url",
+                name: "IX_Resumes_JobSeekerId",
                 table: "Resumes",
-                column: "Url",
+                column: "JobSeekerId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRole_UserId",
+                table: "UserRole",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -487,6 +560,9 @@ namespace jobinjaClone.Migrations
                 name: "Resumes");
 
             migrationBuilder.DropTable(
+                name: "UserRole");
+
+            migrationBuilder.DropTable(
                 name: "Benefits");
 
             migrationBuilder.DropTable(
@@ -505,10 +581,16 @@ namespace jobinjaClone.Migrations
                 name: "SeniorityLevels");
 
             migrationBuilder.DropTable(
+                name: "Role");
+
+            migrationBuilder.DropTable(
                 name: "JobSeekers");
 
             migrationBuilder.DropTable(
                 name: "Provinces");
+
+            migrationBuilder.DropTable(
+                name: "User");
         }
     }
 }
