@@ -19,7 +19,7 @@ namespace jobinjaClone.Entities
 
         public string EndYear { get; set; } = null!;
 
-        public int JobseekerId { get; set; }
+        public int JobSeekerId { get; set; }
 
         public bool StillWorking { get; set; }
 

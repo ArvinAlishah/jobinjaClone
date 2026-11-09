@@ -4,9 +4,8 @@ namespace jobinjaClone.Entities
     public class Language : BaseEntity
     {
         public string Name { get; set; } = null!;
-        public LevelEnum Level { get; set; }
-
-        public int JobseekerId { get; set; }
+        public LanguageLevelEnum Level { get; set; }
+        public int JobSeekerId { get; set; }
         public JobSeeker JobSeeker { get; set; } = null!;
 
     }

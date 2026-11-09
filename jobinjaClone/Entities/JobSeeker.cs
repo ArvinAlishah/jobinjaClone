@@ -29,6 +29,7 @@ namespace jobinjaClone.Entities
         public List<Education> Education { get; set; } = null!;
 
         public List<Language> Languages { get; set; } = null!;
+        
 
     }
 }
