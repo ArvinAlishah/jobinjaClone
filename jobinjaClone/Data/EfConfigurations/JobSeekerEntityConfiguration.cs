@@ -16,15 +16,12 @@ public class JobSeekerEntityConfiguration : IEntityTypeConfiguration<JobSeeker>
 
         builder.Property(x => x.LastName).HasMaxLength(30).IsRequired();
 
-        builder.Property(x => x.Email).HasMaxLength(50);
 
         builder.Property(x => x.About).HasMaxLength(255);
 
-        builder.Property(x => x.PasswordHash).HasMaxLength(100).IsRequired();
 
         builder.Property(x => x.BirthDay).HasMaxLength(20);
 
-        builder.Property(x => x.Username).HasMaxLength(50).IsRequired();
 
         builder.Property(x => x.Mobile).HasMaxLength(20);
 
@@ -64,7 +61,12 @@ public class JobSeekerEntityConfiguration : IEntityTypeConfiguration<JobSeeker>
 
         builder.HasOne(x => x.Resume)
             .WithOne(x => x.JobSeeker)
-             .HasForeignKey<Resume>(x=>x.Id);
+             .HasForeignKey<Resume>(x=>x.JobSeekerId);
+
+        builder.HasOne(x => x.User)
+             .WithOne()
+                  .HasForeignKey<JobSeeker>(x => x.UserId)
+                     .OnDelete(DeleteBehavior.Restrict);
 
 
     }

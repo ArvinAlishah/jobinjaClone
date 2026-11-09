@@ -1,4 +1,5 @@
 ﻿using jobinjaClone.Enums;
+using Microsoft.AspNetCore.SignalR;
 
 namespace jobinjaClone.Entities
 {
@@ -7,9 +8,6 @@ namespace jobinjaClone.Entities
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string Mobile { get; set; } = null!;
-        public string Username { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string PasswordHash { get; set; } = null!;
         public string BirthDay { get; set; } = null!;
 
         public string About { get; set; } = null!;
@@ -19,6 +17,9 @@ namespace jobinjaClone.Entities
         public MarriageStatusEnum MarriageStatus { get; set; }
 
         public MilitaryServiceStatusEnum MiliteryStatus { get; set; }
+
+        public  int UserId { get; set; }
+        public User User { set; get; } = null!;
 
         public int ProvinceId { get; set; } 
 

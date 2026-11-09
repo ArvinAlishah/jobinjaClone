@@ -18,6 +18,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Benefits> Benefits { get; set; }
     public DbSet<SeniorityLevel> SeniorityLevels { get; set; }
     public DbSet<PrefersContact> PrefersContacts { get; set; }
+    public DbSet<User> User { get; set; }
+    public DbSet<UserRole> UserRole { get; set; }
+
+    public DbSet<Role> Role { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
