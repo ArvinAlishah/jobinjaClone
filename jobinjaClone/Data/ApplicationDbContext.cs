@@ -23,6 +23,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<Role> Role { get; set; }
 
+    public DbSet<ProfileImage> ProfileImage { get; set; }
+
+    public DbSet<Personal> Personal { get; set; }
+
+    public DbSet<BasicData> BasicData { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

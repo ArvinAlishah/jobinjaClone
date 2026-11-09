@@ -21,6 +21,8 @@ namespace jobinjaClone.Data.EfConfigurations
             builder.Property(x => x.StartYear).IsRequired().HasMaxLength(4);
 
             builder.Property(x => x.EndYear).HasMaxLength(4);
+
+           
         }
     }
 }

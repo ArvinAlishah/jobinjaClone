@@ -12,29 +12,12 @@ public class JobSeekerEntityConfiguration : IEntityTypeConfiguration<JobSeeker>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.FirstName).HasMaxLength(30).IsRequired();
-
-        builder.Property(x => x.LastName).HasMaxLength(30).IsRequired();
-
+    
 
         builder.Property(x => x.About).HasMaxLength(255);
 
 
-        builder.Property(x => x.BirthDay).HasMaxLength(20);
 
-
-        builder.Property(x => x.Mobile).HasMaxLength(20);
-
-        builder.Property(x => x.Gender);
-
-        builder.Property(x => x.MarriageStatus);
-
-        builder.Property(x => x.MiliteryStatus);
-
-        builder.HasOne(x => x.Province)
-            .WithMany(x => x.JobSeekers)
-              .HasForeignKey(x => x.ProvinceId)
-                .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.Skills)
             .WithMany(x => x.JobSeekers);
@@ -68,6 +51,8 @@ public class JobSeekerEntityConfiguration : IEntityTypeConfiguration<JobSeeker>
                   .HasForeignKey<JobSeeker>(x => x.UserId)
                      .OnDelete(DeleteBehavior.Restrict);
 
-
+        builder.HasMany(x => x.ProfileImages)
+            .WithOne(x => x.JobSeeker)
+             .HasForeignKey(x => x.JobSeekerId);
     }
 }
