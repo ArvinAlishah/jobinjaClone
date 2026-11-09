@@ -1,4 +1,5 @@
 ﻿using jobinjaClone.Data;
+using jobinjaClone.DTOs.JobSeeker;
 using jobinjaClone.DTOs.JobSeekers;
 using jobinjaClone.Entities;
 using jobinjaClone.Helpers;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace jobinjaClone.Controllers
 {
     [Authorize(Roles = "JobSeeker")]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class JobSeekerController(ApplicationDbContext context) : ControllerBase
     {
@@ -36,6 +37,8 @@ namespace jobinjaClone.Controllers
 
             return Ok();
         }
+
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -154,7 +157,26 @@ namespace jobinjaClone.Controllers
             return Ok(JobSeeker);
         }
 
-
-
+        [HttpPut]
+        public async Task<IActionResult> UpdateBasicData(UpdateBasicDataDTO request)
+        {
+            var UserId = JwtHellper.GetId(User);
+            var JobSeeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.UserId == UserId);
+            if(JobSeeker == null)
+            {
+                return NotFound();
+            }
+            var BasicDataTemp = new BasicData
+            {
+                FirstName = request.FirstName,
+                JobSeekerId = JobSeeker.Id,
+                JobTitel = request.JobTitle,
+                LastName = request.LastName,
+                WorkingStatus = request.WorkingStatus
+            };
+            JobSeeker.BasicData = BasicDataTemp;
+            await context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
