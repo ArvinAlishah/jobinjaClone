@@ -15,9 +15,9 @@ namespace jobinjaClone.Entities
 
         public string StartYear { get; set; } = null!;
 
-        public MonthEnum Endtmonth { get; set; }
+        public MonthEnum? Endtmonth { get; set; }
 
-        public string EndYear { get; set; } = null!;
+        public string? EndYear { get; set; } 
 
         public int JobSeekerId { get; set; }
 

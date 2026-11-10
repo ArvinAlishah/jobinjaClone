@@ -234,11 +234,10 @@ namespace jobinjaClone.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("EndYear")
-                        .IsRequired()
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
 
-                    b.Property<int>("Endtmonth")
+                    b.Property<int?>("Endtmonth")
                         .HasColumnType("int");
 
                     b.Property<int>("JobSeekerId")

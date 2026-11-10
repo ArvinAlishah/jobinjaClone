@@ -1,4 +1,5 @@
 ﻿using jobinjaClone.Data;
+using jobinjaClone.DTOs.Exprince;
 using jobinjaClone.DTOs.JobSeeker;
 using jobinjaClone.DTOs.JobSeekers;
 using jobinjaClone.DTOs.Skill;
@@ -362,6 +363,81 @@ namespace jobinjaClone.Controllers
                 return NotFound("مهارت پیدا نشد");
             }
             jobSeeker.Skills.Remove(skill);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddExprience(AddExprienceDTo request)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Experiences)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+            {
+                return NotFound();
+            }
+        
+            var experience = new Experience
+            {
+               CompanyName  = request.CompanyName,
+               JobSeekerId = jobSeeker.Id,
+               RollName = request.RollName,
+               Startmonth = request.StartMonth,
+               StartYear = request.StartYear,
+               StillWorking = request.StillWorking,
+               DescriptionIsOn = request.DescriptionIson,
+               
+
+               
+            };
+
+            if (request.DescriptionIson)
+            {
+                experience.Description = request.Description;
+
+            }
+            if (!request.StillWorking)
+            {
+                experience.EndYear = request.EndYear;
+                experience.Endtmonth = request.EndMonth;
+
+
+            }
+            jobSeeker.Experiences.Add(experience);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteExprience(int ExperiencesId)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Experiences)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+            {
+                return NotFound();
+            }
+            var experiences = jobSeeker.Experiences
+                .FirstOrDefault(x => x.Id == ExperiencesId);
+
+            if (experiences == null)
+            {
+                return NotFound("مهارت پیدا نشد");
+            }
+            jobSeeker.Experiences.Remove(experiences);
 
             await context.SaveChangesAsync();
 
