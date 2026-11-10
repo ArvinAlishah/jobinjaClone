@@ -20,8 +20,6 @@ namespace jobinjaClone.DTOs.Education
         public string? Description { get; set; }
         [Required]
         public bool StillEducatucating { get; set; }
-        [Required]
-        public int JobSeekerId { get; set; }
 
     }
 }

@@ -3,6 +3,7 @@ using jobinjaClone.DTOs.Education;
 using jobinjaClone.DTOs.Exprince;
 using jobinjaClone.DTOs.JobSeeker;
 using jobinjaClone.DTOs.JobSeekers;
+using jobinjaClone.DTOs.Languge;
 using jobinjaClone.DTOs.Skill;
 using jobinjaClone.Entities;
 using jobinjaClone.Helpers;
@@ -112,7 +113,9 @@ namespace jobinjaClone.Controllers
                                         Languages = x.Languages.Select(Language => new LanguageDto
                                         {
                                             Id = Language.Id,
-                                            Name = Language.Name
+                                            Name = Language.Name,
+                                            Level = Language.Level.ToString()
+                                            
                                         }).ToList(),
                                         Skills = x.Skills.Select(skill => new SkillDto
                                         {
@@ -446,7 +449,7 @@ namespace jobinjaClone.Controllers
         }
     
      [HttpPost]
-        public async Task<IActionResult> AddEducationDTOe(AddEducationDTO request)
+        public async Task<IActionResult> AddEducation(AddEducationDTO request)
         {
             var userId = JwtHellper.GetId(User);
 
@@ -467,7 +470,7 @@ namespace jobinjaClone.Controllers
                 StartYear = request.StartYear,
                 StillEducatucating = request.StillEducatucating,
                 Description = request.Description,
-                JobSeekerId = request.JobSeekerId,
+                JobSeekerId = jobSeeker.Id,
                 
 
             };
@@ -511,6 +514,71 @@ namespace jobinjaClone.Controllers
 
             return Ok();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddLanguge(CreateLangugeDTO request)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Languages)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+            var isperessent = await context.Languages
+               .AnyAsync(x => x.Name == request.Name);
+
+            if (isperessent)
+            {
+                return BadRequest("از قبل موجود است");
+            }
+            if (jobSeeker == null)
+            {
+                return NotFound();
+            }
+
+            var language = new Language
+            {
+               JobSeekerId = jobSeeker.Id,
+               Level = request.Level,
+               Name = request.Name,
+
+
+            };
+
+
+        
+            jobSeeker.Languages.Add(language);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+        [HttpDelete]
+        public async Task<IActionResult> Deletelanguage(int LanguageId)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Languages)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+            {
+                return NotFound();
+            }
+            var language = jobSeeker.Languages
+                .FirstOrDefault(x => x.Id == LanguageId);
+
+            if (language == null)
+            {
+                return NotFound("مهارت پیدا نشد");
+            }
+            jobSeeker.Languages.Remove(language);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
+
 
 }
