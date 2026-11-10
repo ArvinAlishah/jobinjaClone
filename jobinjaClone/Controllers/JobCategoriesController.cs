@@ -11,22 +11,22 @@ namespace jobinjaClone.Controllers
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class SeniorityLevelController(ApplicationDbContext context) : ControllerBase
+    public class JobCategoriesController(ApplicationDbContext context) : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> CreateSeniorityLevel(CreateSeniorityLevelDTO requst)
+        public async Task<IActionResult> Create(CreateJobCategoriesLevelDTO requst)
         {
-            var IsPressent =    await context.SeniorityLevels.AnyAsync(x => x.Name == requst.Name);
+            var IsPressent =    await context.JobCategories.AnyAsync(x => x.Name == requst.Name);
             if (IsPressent)
             {
                  return BadRequest("این سطح ارشدیت قبلاً ثبت شده است");
             }
 
-            var seniorityLevel = new SeniorityLevel
+            var jobCategories = new JobCategories
             {
                 Name = requst.Name
             };
-            context.SeniorityLevels.Add(seniorityLevel);
+            context.JobCategories.Add(jobCategories);
             await context.SaveChangesAsync();
             return Ok();
         }
@@ -34,7 +34,7 @@ namespace jobinjaClone.Controllers
         [HttpGet]
         public async Task<IActionResult> Getall()
         {
-            var seniorityLevel = await context.SeniorityLevels
+            var jobCategories = await context.JobCategories
        .Select(x => new GetSeniorityLevelDTO
        {
            id = x.Id,
@@ -42,33 +42,33 @@ namespace jobinjaClone.Controllers
        })
        .ToListAsync();
 
-            return Ok(seniorityLevel);
+            return Ok(jobCategories);
 
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateSeniorityLevel(UpdateSeniorityLevelDTO requst)
+        public async Task<IActionResult> Update(UpdateJobCategoriesLevelDTO requst)
         {
-            var seniorityLevel = await context.SeniorityLevels.FirstOrDefaultAsync(x => x.Id == requst.id);
-            if (seniorityLevel == null)
+            var jobCategories = await context.JobCategories.FirstOrDefaultAsync(x => x.Id == requst.id);
+            if (jobCategories == null)
             {
                 return BadRequest("این سطح ارشدیت قبلاً ثبت نشده است");
             }
-            seniorityLevel.Name = requst.Name;
+            jobCategories.Name = requst.Name;
             await context.SaveChangesAsync();
 
             return Ok();
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteSeniorityLevel(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var seniorityLevel = await context.SeniorityLevels.FirstOrDefaultAsync(x => x.Id == id);
-            if (seniorityLevel == null)
+            var jobCategories = await context.JobCategories.FirstOrDefaultAsync(x => x.Id == id);
+            if (jobCategories == null)
             {
                 return BadRequest("این سطح ارشدیت قبلاً ثبت نشده است");
             }
-            context.SeniorityLevels.Remove(seniorityLevel);
+            context.JobCategories.Remove(jobCategories);
             await context.SaveChangesAsync();
 
             return Ok();
