@@ -2,7 +2,7 @@
 
 namespace jobinjaClone.DTOs.Province
 {
-    public class CreateProvinceDTO
+    public class CreatePrefersContactDTO
     {
         [Required]
         [MaxLength(50)]

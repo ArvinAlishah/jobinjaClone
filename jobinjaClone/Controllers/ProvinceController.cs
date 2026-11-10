@@ -14,7 +14,7 @@ namespace jobinjaClone.Controllers
     public class ProvinceController(ApplicationDbContext context) : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> CreateProvince(CreateProvinceDTO requst)
+        public async Task<IActionResult> CreateProvince(CreatePrefersContactDTO requst)
         {
             var IsPressent =    await context.Provinces.AnyAsync(x => x.Name == requst.Name);
             if (IsPressent)
@@ -35,7 +35,7 @@ namespace jobinjaClone.Controllers
         public async Task<IActionResult> Getall()
         {
             var provinces = await context.Provinces
-       .Select(x => new GetProvincesDTO
+       .Select(x => new GetPrefersContactDTO
        {
            id = x.Id,
            Name = x.Name
@@ -47,7 +47,7 @@ namespace jobinjaClone.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateProvince(UpdateProvinceDTO requst)
+        public async Task<IActionResult> UpdateProvince(UpdatePrefersContactDTO requst)
         {
             var province = await context.Provinces.FirstOrDefaultAsync(x => x.Id == requst.id);
             if (province == null)

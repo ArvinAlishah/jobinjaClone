@@ -2,7 +2,7 @@
 
 namespace jobinjaClone.DTOs.Province
 {
-    public class UpdateProvinceDTO
+    public class UpdatePrefersContactDTO
     {
         [Required]
         public string Name { get; set; } = null!;

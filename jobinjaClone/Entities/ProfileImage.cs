@@ -2,7 +2,7 @@
 {
     public class ProfileImage:BaseEntity
     {
-        public String Url { get; set; } = null!;
+        public string Url { get; set; } = null!;
 
         public JobSeeker JobSeeker { get; set; } = null!;
 
