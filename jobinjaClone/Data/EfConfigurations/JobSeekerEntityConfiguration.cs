@@ -20,7 +20,8 @@ public class JobSeekerEntityConfiguration : IEntityTypeConfiguration<JobSeeker>
 
 
         builder.HasMany(x => x.Skills)
-            .WithMany(x => x.JobSeekers);
+            .WithOne(x => x.JobSeekers)
+            .HasForeignKey(x => x.JobSeekersId);
 
         builder.HasMany(x => x.Languages)
            .WithOne(x => x.JobSeeker)

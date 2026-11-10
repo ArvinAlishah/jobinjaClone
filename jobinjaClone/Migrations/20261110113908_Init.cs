@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace jobinjaClone.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -94,20 +94,6 @@ namespace jobinjaClone.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SeniorityLevels", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Skills",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Skills", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -254,30 +240,6 @@ namespace jobinjaClone.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "JobSeekerSkills",
-                columns: table => new
-                {
-                    JobSeekersId = table.Column<int>(type: "int", nullable: false),
-                    SkillsId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_JobSeekerSkills", x => new { x.JobSeekersId, x.SkillsId });
-                    table.ForeignKey(
-                        name: "FK_JobSeekerSkills_JobSeekers_JobSeekersId",
-                        column: x => x.JobSeekersId,
-                        principalTable: "JobSeekers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_JobSeekerSkills_Skills_SkillsId",
-                        column: x => x.SkillsId,
-                        principalTable: "Skills",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Languages",
                 columns: table => new
                 {
@@ -390,6 +352,27 @@ namespace jobinjaClone.Migrations
                     table.ForeignKey(
                         name: "FK_Resumes_JobSeekers_JobSeekerId",
                         column: x => x.JobSeekerId,
+                        principalTable: "JobSeekers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Skills",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    JobSeekersId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Skills", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Skills_JobSeekers_JobSeekersId",
+                        column: x => x.JobSeekersId,
                         principalTable: "JobSeekers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -548,11 +531,6 @@ namespace jobinjaClone.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobSeekerSkills_SkillsId",
-                table: "JobSeekerSkills",
-                column: "SkillsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Languages_JobSeekerId",
                 table: "Languages",
                 column: "JobSeekerId");
@@ -601,6 +579,11 @@ namespace jobinjaClone.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Skills_JobSeekersId",
+                table: "Skills",
+                column: "JobSeekersId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRole_UserId",
                 table: "UserRole",
                 column: "UserId");
@@ -625,9 +608,6 @@ namespace jobinjaClone.Migrations
                 name: "JobCategoriesPreference");
 
             migrationBuilder.DropTable(
-                name: "JobSeekerSkills");
-
-            migrationBuilder.DropTable(
                 name: "Languages");
 
             migrationBuilder.DropTable(
@@ -649,6 +629,9 @@ namespace jobinjaClone.Migrations
                 name: "Resumes");
 
             migrationBuilder.DropTable(
+                name: "Skills");
+
+            migrationBuilder.DropTable(
                 name: "UserRole");
 
             migrationBuilder.DropTable(
@@ -656,9 +639,6 @@ namespace jobinjaClone.Migrations
 
             migrationBuilder.DropTable(
                 name: "JobCategories");
-
-            migrationBuilder.DropTable(
-                name: "Skills");
 
             migrationBuilder.DropTable(
                 name: "PrefersContacts");

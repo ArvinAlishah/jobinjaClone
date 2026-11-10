@@ -13,6 +13,8 @@ namespace jobinjaClone.Controllers
     [ApiController]
     public class BenefitsDTOController(ApplicationDbContext context) : ControllerBase
     {
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateBenefitsDTO requst)
         {
@@ -45,6 +47,7 @@ namespace jobinjaClone.Controllers
             return Ok(benefits);
 
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPut]
         public async Task<IActionResult> Update(UpdateBenefitsDTO requst)
@@ -59,6 +62,7 @@ namespace jobinjaClone.Controllers
 
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)

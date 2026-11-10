@@ -8,11 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace jobinjaClone.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [Route("api/[controller]/[Action]")]
     [ApiController]
     public class PrefersContactController(ApplicationDbContext context) : ControllerBase
     {
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public async Task<IActionResult> Create(CreatePrefersContactDTO requst)
         {
@@ -45,6 +46,7 @@ namespace jobinjaClone.Controllers
             return Ok(PrefersContact);
 
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPut]
         public async Task<IActionResult> Update(UpdatePrefersContactDTO requst)
@@ -59,6 +61,7 @@ namespace jobinjaClone.Controllers
 
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)

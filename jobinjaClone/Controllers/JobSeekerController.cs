@@ -1,11 +1,13 @@
 ﻿using jobinjaClone.Data;
 using jobinjaClone.DTOs.JobSeeker;
 using jobinjaClone.DTOs.JobSeekers;
+using jobinjaClone.DTOs.Skill;
 using jobinjaClone.Entities;
 using jobinjaClone.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 
 namespace jobinjaClone.Controllers
@@ -49,63 +51,11 @@ namespace jobinjaClone.Controllers
                 return NotFound();
             }
 
-            List<ExperienceDto> Experiences = new List<ExperienceDto>();
-            foreach (var Experience in HaveJobSeeker.Experiences)
-            {
-                Experiences.Add(new ExperienceDto
-                {
-                    CompanyName = Experience.CompanyName,
-                    Description = Experience.Description,
-                    EndMonth = Experience.Endtmonth.ToString(),
-                    StartMonth = Experience.Startmonth.ToString(),
-                    EndYear = Experience.EndYear,
-                    Id = Experience.Id,
-                    RollName = Experience.RollName,
-                    StartYear = Experience.StartYear,
-                    StillWorking = Experience.StillWorking
+          
 
-                });
-            }
-
-            List<EducationDto> Educations = new List<EducationDto>();
-            foreach (var Educat in HaveJobSeeker.Education)
-            {
-                Educations.Add(new EducationDto
-                {
-                    Degree = Educat.Degree.ToString(),
-                    Description = Educat.Description,
-                    EndYear = Educat.Description,
-                    FieldName = Educat.FieldName,
-                    Id = Educat.Id,
-                    InstituteName = Educat.InstituteName,
-                    StartYear = Educat.StartYear,
-                    StillEducatucating = Educat.StillEducatucating
-
-                });
-            }
-            List<LanguageDto> Language = new List<LanguageDto>();
-            foreach (var Languages in HaveJobSeeker.Languages)
-            {
-                Language.Add(new LanguageDto
-                {
-                    Id = Languages.Id,
-                    Level = Languages.Level.ToString(),
-                    Name = Languages.Name
-                });
-            }
-            List<SkillDto> skillss = new List<SkillDto>();
-            foreach (var skill in HaveJobSeeker.Skills)
-            {
-                skillss.Add(new SkillDto
-                {
-                    Id = skill.Id,
-                    Name = skill.Name
-
-                });
-            }
 
             var JobSeeker = await context.JobSeekers.Where(x => x.UserId == UserId)
-                                    .Select(x => new GetJobSeekerResponseDto
+                                    .Select( x => new GetJobSeekerResponseDto
                                     {
                                         About = x.About,
                                         BasicData = new()
@@ -134,10 +84,40 @@ namespace jobinjaClone.Controllers
                                             IsPublic = x.Resume.IsPublic,
                                             Url = x.Resume.Url
                                         },
-                                        Experiences = Experiences,
-                                        Educations = Educations,
-                                        Languages = Language,
-                                        Skills = skillss,
+                                        Experiences = x.Experiences.Select(Experience => new ExperienceDto
+                                        {
+                                            CompanyName = Experience.CompanyName,
+                                            Description = Experience.Description,
+                                            EndMonth = Experience.Endtmonth.ToString(),
+                                            StartMonth = Experience.Startmonth.ToString(),
+                                            EndYear = Experience.EndYear,
+                                            Id = Experience.Id,
+                                            RollName = Experience.RollName,
+                                            StartYear = Experience.StartYear,
+                                            StillWorking = Experience.StillWorking
+                                        }).ToList(),
+                                        Educations = x.Education.Select(Educat => new EducationDto
+                                        {
+                                            Degree = Educat.Degree.ToString(),
+                                            Description = Educat.Description,
+                                            EndYear = Educat.Description,
+                                            FieldName = Educat.FieldName,
+                                            Id = Educat.Id,
+                                            InstituteName = Educat.InstituteName,
+                                            StartYear = Educat.StartYear,
+                                            StillEducatucating = Educat.StillEducatucating
+                                        }).ToList(),
+                                        Languages = x.Languages.Select(Language => new LanguageDto
+                                        {
+                                            Id = Language.Id,
+                                            Name = Language.Name
+                                        }).ToList(),
+                                        Skills = x.Skills.Select(skill => new SkillDto
+                                        {
+                                            Id = skill.Id,
+                                            Name = skill.Name
+                                        }).ToList()
+                                        ,
                                         Preference = new()
                                         {
                                             Benefits = x.Preference.Benefits.Select(b => b.Name).ToList(),
@@ -226,8 +206,17 @@ namespace jobinjaClone.Controllers
             var userId = JwtHellper.GetId(User);
 
             var jobSeeker = await context.JobSeekers
-                .Include(x => x.Preference)
-                .FirstOrDefaultAsync(x => x.UserId == userId);
+     .Include(x => x.Preference)
+         .ThenInclude(x => x.Province)
+     .Include(x => x.Preference)
+         .ThenInclude(x => x.Benefits)
+     .Include(x => x.Preference)
+         .ThenInclude(x => x.JobCategories)
+     .Include(x => x.Preference)
+         .ThenInclude(x => x.PrefersContact)
+     .Include(x => x.Preference)
+         .ThenInclude(x => x.SeniorityLevel)
+     .FirstOrDefaultAsync(x => x.UserId == userId);
 
             if (jobSeeker == null)
                 return NotFound();
@@ -239,7 +228,10 @@ namespace jobinjaClone.Controllers
                     JobSeekerId = jobSeeker.Id
                 };
             }
-
+            if (jobSeeker.Preference.Province == null)
+            {
+                jobSeeker.Preference.Province = new List<Province>();
+            }
             foreach (var provinceid in request.ProvinceId)
             {
                 var  TempProvince = await context.Provinces.FirstOrDefaultAsync(x => x.Id == provinceid);
@@ -247,8 +239,15 @@ namespace jobinjaClone.Controllers
                 {
                     return NotFound("استان مورد نظر ثبت شده نمیباشد");
                 }
+
+             
                 jobSeeker.Preference.Province.Add(TempProvince);
 
+            }
+
+            if (jobSeeker.Preference.Benefits == null)
+            {
+                jobSeeker.Preference.Benefits = new List<Benefits>();
             }
             foreach (var benefitsid in request.BenefitsId)
             {
@@ -260,7 +259,10 @@ namespace jobinjaClone.Controllers
                 jobSeeker.Preference.Benefits.Add(Tempbenefits);
 
             }
-
+            if (jobSeeker.Preference.JobCategories == null)
+            {
+                jobSeeker.Preference.JobCategories = new List<JobCategories>();
+            }
             foreach (var jobCategoriesId in request.JobCategoriesId)
             {
                 var TempjobCategories = await context.JobCategories.FirstOrDefaultAsync(x => x.Id == jobCategoriesId);
@@ -270,6 +272,11 @@ namespace jobinjaClone.Controllers
                 }
                 jobSeeker.Preference.JobCategories.Add(TempjobCategories);
 
+            }
+
+            if (jobSeeker.Preference.PrefersContact == null)
+            {
+                jobSeeker.Preference.PrefersContact = new List<PrefersContact>();
             }
             foreach (var prefersContactId in request.PrefersContactId)
             {
@@ -281,19 +288,81 @@ namespace jobinjaClone.Controllers
                 jobSeeker.Preference.PrefersContact.Add(TempprefersContact);
 
             }
-
+            if (jobSeeker.Preference.SeniorityLevel == null)
+            {
+                jobSeeker.Preference.SeniorityLevel = new List<SeniorityLevel>();
+            }
             foreach (var seniorityLevelId in request.SeniorityLevelId)
             {
                 var TempSeniorityLevels = await context.SeniorityLevels.FirstOrDefaultAsync(x => x.Id == seniorityLevelId);
                 if (TempSeniorityLevels == null)
                 {
-                    return NotFound("مهارت مورد نظر یافت نشده است");
+                    return NotFound("ارشدیت مورد نظر یافت نشده است");
                 }
                 jobSeeker.Preference.SeniorityLevel.Add(TempSeniorityLevels);
 
             }
-       request.ExpectedSalary = request.ExpectedSalary;
+       jobSeeker.Preference.ExpectedSalary = request.ExpectedSalary;
         
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddSkill(AddSkillDTO request)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Skills)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+            {
+                return NotFound();
+            }
+            var isPresent = jobSeeker.Skills.Any(x => x.Name == request.Name);
+
+            if (isPresent)
+            {
+                return BadRequest("مهارت از قبل ثبت شده است");
+            }
+            var skill = new Skills
+            {
+                JobSeekersId = jobSeeker.Id,
+                Name = request.Name
+            };
+
+            jobSeeker.Skills.Add(skill);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteSkill(int skillId)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Skills)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+            {
+                return NotFound();
+            }
+            var skill = jobSeeker.Skills
+                .FirstOrDefault(x => x.Id == skillId);
+
+            if (skill == null)
+            {
+                return NotFound("مهارت پیدا نشد");
+            }
+            jobSeeker.Skills.Remove(skill);
+
             await context.SaveChangesAsync();
 
             return Ok();
