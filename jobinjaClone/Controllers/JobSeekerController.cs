@@ -1,4 +1,5 @@
 ﻿using jobinjaClone.Data;
+using jobinjaClone.DTOs.About;
 using jobinjaClone.DTOs.Education;
 using jobinjaClone.DTOs.Exprince;
 using jobinjaClone.DTOs.JobSeeker;
@@ -578,6 +579,38 @@ namespace jobinjaClone.Controllers
 
             return Ok();
         }
+
+        [HttpPut]
+    public async Task<IActionResult> UpdateAbout(UpdateAboutDTO request)
+        {
+            var UserId = JwtHellper.GetId(User);
+            var jobseeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.UserId == UserId);
+
+            if (jobseeker == null)
+            {
+                return NotFound("کارجو وجود ندارد");
+            }
+            jobseeker.About = request.About;
+
+            await context.SaveChangesAsync();
+            return Ok(request);
+        }
+        [HttpDelete]
+
+        public async Task<IActionResult> DeleteAbout()
+        {
+            var UserId = JwtHellper.GetId(User);
+            var jobseeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.Id == UserId);
+            if (jobseeker == null)
+            {
+                return NotFound("کارجو وجود ندارد");
+            }
+            jobseeker.About = null;
+
+            await context.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 
 
