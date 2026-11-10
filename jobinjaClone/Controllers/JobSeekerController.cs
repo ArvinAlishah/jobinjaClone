@@ -1,4 +1,5 @@
 ﻿using jobinjaClone.Data;
+using jobinjaClone.DTOs.Education;
 using jobinjaClone.DTOs.Exprince;
 using jobinjaClone.DTOs.JobSeeker;
 using jobinjaClone.DTOs.JobSeekers;
@@ -443,5 +444,73 @@ namespace jobinjaClone.Controllers
 
             return Ok();
         }
+    
+     [HttpPost]
+        public async Task<IActionResult> AddEducationDTOe(AddEducationDTO request)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Education)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+            {
+                return NotFound();
+            }
+
+            var education = new Education
+            {
+                Degree = request.Degree,
+                FieldName = request.FieldName,
+                InstituteName= request.InstituteName,
+                StartYear = request.StartYear,
+                StillEducatucating = request.StillEducatucating,
+                Description = request.Description,
+                JobSeekerId = request.JobSeekerId,
+                
+
+            };
+
+
+            if (!request.StillEducatucating)
+            {
+                education.EndYear = request.EndYear;
+
+
+            }
+            jobSeeker.Education.Add(education);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteEducation(int EducationId)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Education)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+            {
+                return NotFound();
+            }
+            var education = jobSeeker.Education
+                .FirstOrDefault(x => x.Id == EducationId);
+
+            if (education == null)
+            {
+                return NotFound("مهارت پیدا نشد");
+            }
+            jobSeeker.Education.Remove(education);
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
+
 }

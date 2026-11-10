@@ -7,8 +7,8 @@ namespace jobinjaClone.Entities
         public string InstituteName { get; set; } = null!;
         public EducationDegreeEnum Degree { set; get; }
         public string StartYear { get; set; } = null!;
-        public string EndYear { get; set; } = null!;
-        public string Description { get; set; } = null!;
+        public string? EndYear { get; set; } 
+        public string? Description { get; set; } 
         public bool StillEducatucating { get; set; }
 
         public int JobSeekerId {  get; set; }

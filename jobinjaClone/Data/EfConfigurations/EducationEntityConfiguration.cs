@@ -16,7 +16,7 @@ public class EducationEntityConfiguration : IEntityTypeConfiguration<Education>
 
         builder.Property(x => x.InstituteName).IsRequired().HasMaxLength(150);
 
-        builder.Property(x => x.StartYear).IsRequired().HasMaxLength(4);
+        builder.Property(x => x.StartYear).IsRequired().HasMaxLength(20);
 
         builder.Property(x => x.EndYear).HasMaxLength(4);
 
