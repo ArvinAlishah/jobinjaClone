@@ -220,5 +220,83 @@ namespace jobinjaClone.Controllers
 
             return Ok();
         }
+        [HttpPut]
+        public async Task<IActionResult> UpdatePerfrence(UpdatePerfrenceDataDTO request)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Preference)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+                return NotFound();
+
+            if (jobSeeker.Preference == null)
+            {
+                jobSeeker.Preference = new Preference
+                {
+                    JobSeekerId = jobSeeker.Id
+                };
+            }
+
+            foreach (var provinceid in request.ProvinceId)
+            {
+                var  TempProvince = await context.Provinces.FirstOrDefaultAsync(x => x.Id == provinceid);
+                 if (TempProvince == null)
+                {
+                    return NotFound("استان مورد نظر ثبت شده نمیباشد");
+                }
+                jobSeeker.Preference.Province.Add(TempProvince);
+
+            }
+            foreach (var benefitsid in request.BenefitsId)
+            {
+                var Tempbenefits = await context.Benefits.FirstOrDefaultAsync(x => x.Id == benefitsid);
+                if (Tempbenefits == null)
+                {
+                    return NotFound("مزایا مورد نظر یافت نشد");
+                }
+                jobSeeker.Preference.Benefits.Add(Tempbenefits);
+
+            }
+
+            foreach (var jobCategoriesId in request.JobCategoriesId)
+            {
+                var TempjobCategories = await context.JobCategories.FirstOrDefaultAsync(x => x.Id == jobCategoriesId);
+                if (TempjobCategories == null)
+                {
+                    return NotFound("شغل مورد نظر یافت نشد ");
+                }
+                jobSeeker.Preference.JobCategories.Add(TempjobCategories);
+
+            }
+            foreach (var prefersContactId in request.PrefersContactId)
+            {
+                var TempprefersContact = await context.PrefersContacts.FirstOrDefaultAsync(x => x.Id == prefersContactId);
+                if (TempprefersContact == null)
+                {
+                    return NotFound("قرارداد مورد نظر یافت نشد  ");
+                }
+                jobSeeker.Preference.PrefersContact.Add(TempprefersContact);
+
+            }
+
+            foreach (var seniorityLevelId in request.SeniorityLevelId)
+            {
+                var TempSeniorityLevels = await context.SeniorityLevels.FirstOrDefaultAsync(x => x.Id == seniorityLevelId);
+                if (TempSeniorityLevels == null)
+                {
+                    return NotFound("مهارت مورد نظر یافت نشده است");
+                }
+                jobSeeker.Preference.SeniorityLevel.Add(TempSeniorityLevels);
+
+            }
+       request.ExpectedSalary = request.ExpectedSalary;
+        
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
