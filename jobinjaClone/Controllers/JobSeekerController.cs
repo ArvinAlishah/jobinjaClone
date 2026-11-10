@@ -19,8 +19,8 @@ namespace jobinjaClone.Controllers
         public async Task<IActionResult> Create()
         {
             var UserId = JwtHellper.GetId(User);
-            var HaveJobSeeker = await   context.JobSeekers.AnyAsync(x=> x.UserId == UserId);
-            if(HaveJobSeeker)
+            var HaveJobSeeker = await context.JobSeekers.AnyAsync(x => x.UserId == UserId);
+            if (HaveJobSeeker)
             {
                 return BadRequest();
             }
@@ -28,10 +28,10 @@ namespace jobinjaClone.Controllers
             var JobSeeker = new JobSeeker
             {
                 UserId = UserId,
-                
+
 
             };
-             context.JobSeekers.Add(JobSeeker);
+            context.JobSeekers.Add(JobSeeker);
             await context.SaveChangesAsync();
 
 
@@ -50,20 +50,20 @@ namespace jobinjaClone.Controllers
             }
 
             List<ExperienceDto> Experiences = new List<ExperienceDto>();
-            foreach(var Experience in HaveJobSeeker.Experiences)
+            foreach (var Experience in HaveJobSeeker.Experiences)
             {
                 Experiences.Add(new ExperienceDto
                 {
                     CompanyName = Experience.CompanyName,
                     Description = Experience.Description,
-                    EndMonth = Experience.Endtmonth.ToString() ,
+                    EndMonth = Experience.Endtmonth.ToString(),
                     StartMonth = Experience.Startmonth.ToString(),
                     EndYear = Experience.EndYear,
                     Id = Experience.Id,
-                    RollName = Experience.RollName, 
+                    RollName = Experience.RollName,
                     StartYear = Experience.StartYear,
                     StillWorking = Experience.StillWorking
-                    
+
                 });
             }
 
@@ -78,8 +78,8 @@ namespace jobinjaClone.Controllers
                     FieldName = Educat.FieldName,
                     Id = Educat.Id,
                     InstituteName = Educat.InstituteName,
-                     StartYear = Educat.StartYear,
-                     StillEducatucating = Educat.StillEducatucating
+                    StartYear = Educat.StartYear,
+                    StillEducatucating = Educat.StillEducatucating
 
                 });
             }
@@ -88,9 +88,9 @@ namespace jobinjaClone.Controllers
             {
                 Language.Add(new LanguageDto
                 {
-                  Id = Languages.Id,
-                   Level = Languages.Level.ToString(),
-                   Name = Languages.Name
+                    Id = Languages.Id,
+                    Level = Languages.Level.ToString(),
+                    Name = Languages.Name
                 });
             }
             List<SkillDto> skillss = new List<SkillDto>();
@@ -98,9 +98,9 @@ namespace jobinjaClone.Controllers
             {
                 skillss.Add(new SkillDto
                 {
-                     Id= skill.Id,
-                     Name = skill.Name
-                  
+                    Id = skill.Id,
+                    Name = skill.Name
+
                 });
             }
 
@@ -141,14 +141,14 @@ namespace jobinjaClone.Controllers
                                         Preference = new()
                                         {
                                             Benefits = x.Preference.Benefits.Select(b => b.Name).ToList(),
-                                            SeniorityLevel =  x.Preference.Benefits.Select(b => b.Name).ToList(),
+                                            SeniorityLevel = x.Preference.Benefits.Select(b => b.Name).ToList(),
                                             ExpectedSalary = x.Preference.ExpectedSalary,
-                                            JobCategories = x.Preference.JobCategories.Select(b=>b.Name).ToList(),
+                                            JobCategories = x.Preference.JobCategories.Select(b => b.Name).ToList(),
                                             PrefersContact = x.Preference.PrefersContact.Select(b => b.Name).ToList(),
                                             Province = x.Preference.Province.Select(b => b.Name).ToList()
                                         }
-                                        
-                                        
+
+
 
                                     }).FirstOrDefaultAsync();
 
@@ -158,24 +158,66 @@ namespace jobinjaClone.Controllers
         }
 
         [HttpPut]
+        public async Task<IActionResult> UpdatePersonal(UpdatePersonalDTO request)
+        {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.Personal)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
+                return NotFound();
+
+            var provinceExists = await context.Provinces
+                .AnyAsync(x => x.Id == request.ProvinceId);
+
+            if (!provinceExists)
+                return BadRequest("استان وجود ندارد");
+
+            if (jobSeeker.Personal == null)
+            {
+                jobSeeker.Personal = new Personal();
+            }
+
+            jobSeeker.Personal.BirthDay = request.BirthDay;
+            jobSeeker.Personal.Gender = request.Gender;
+            jobSeeker.Personal.MarriageStatus = request.MarriageStatus;
+            jobSeeker.Personal.MiliteryStatus = request.MiliteryStatus;
+            jobSeeker.Personal.Mobile = request.Mobile;
+            jobSeeker.Personal.ProvinceId = request.ProvinceId;
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+        [HttpPut]
         public async Task<IActionResult> UpdateBasicData(UpdateBasicDataDTO request)
         {
-            var UserId = JwtHellper.GetId(User);
-            var JobSeeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.UserId == UserId);
-            if(JobSeeker == null)
-            {
+            var userId = JwtHellper.GetId(User);
+
+            var jobSeeker = await context.JobSeekers
+                .Include(x => x.BasicData)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (jobSeeker == null)
                 return NotFound();
-            }
-            var BasicDataTemp = new BasicData
+
+            if (jobSeeker.BasicData == null)
             {
-                FirstName = request.FirstName,
-                JobSeekerId = JobSeeker.Id,
-                JobTitel = request.JobTitle,
-                LastName = request.LastName,
-                WorkingStatus = request.WorkingStatus
-            };
-            JobSeeker.BasicData = BasicDataTemp;
+                jobSeeker.BasicData = new BasicData
+                {
+                    JobSeekerId = jobSeeker.Id
+                };
+            }
+
+            jobSeeker.BasicData.FirstName = request.FirstName;
+            jobSeeker.BasicData.LastName = request.LastName;
+            jobSeeker.BasicData.JobTitel = request.JobTitle;
+            jobSeeker.BasicData.WorkingStatus = request.WorkingStatus;
+
             await context.SaveChangesAsync();
+
             return Ok();
         }
     }
