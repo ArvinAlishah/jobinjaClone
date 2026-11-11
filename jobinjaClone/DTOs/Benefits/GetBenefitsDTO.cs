@@ -1,6 +1,6 @@
 ﻿namespace jobinjaClone.DTOs.Province
 {
-    public class GetBenefitsDTO
+    public class GetOfficeFieldDTO
     {
         public int id { get; set; } 
 

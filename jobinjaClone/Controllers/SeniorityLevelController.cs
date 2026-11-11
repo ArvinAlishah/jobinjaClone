@@ -8,11 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace jobinjaClone.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [Route("api/[controller]/[Action]")]
     [ApiController]
     public class SeniorityLevelController(ApplicationDbContext context) : ControllerBase
     {
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public async Task<IActionResult> CreateSeniorityLevel(CreateSeniorityLevelDTO requst)
         {
@@ -45,6 +46,7 @@ namespace jobinjaClone.Controllers
             return Ok(seniorityLevel);
 
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPut]
         public async Task<IActionResult> UpdateSeniorityLevel(UpdateSeniorityLevelDTO requst)
@@ -59,6 +61,7 @@ namespace jobinjaClone.Controllers
 
             return Ok();
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpDelete]
         public async Task<IActionResult> DeleteSeniorityLevel(int id)

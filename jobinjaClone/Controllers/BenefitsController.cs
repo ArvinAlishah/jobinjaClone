@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace jobinjaClone.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [Route("api/[controller]/[Action]")]
     [ApiController]
     public class BenefitsDTOController(ApplicationDbContext context) : ControllerBase

@@ -25,7 +25,7 @@ namespace jobinjaClone.Entities
 
         public EmploeyNumber EmploeyNumber { get; set; } = null!;
 
-        public int  OfficeField { get; set; }
+        public int  OfficeFieldId { get; set; }
 
         public List<OfficeFeild> OfficeFeild { get; set; } = null!;
 
@@ -34,6 +34,9 @@ namespace jobinjaClone.Entities
 
 
         public Employer Employer { get; set; } = null!;
+
+
+        public string AboutOffice { get; set; } = null!;
 
 
 

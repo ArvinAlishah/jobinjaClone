@@ -28,6 +28,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Personal> Personal { get; set; }
 
     public DbSet<BasicData> BasicData { get; set; }
+    public DbSet<Office> Office { get; set; }
+
+    public DbSet<OfficeFeild> OfficeFeild { get; set; }
+
+    public DbSet<EmploeyNumber> EmploeyNumber { get; set; }
+    public DbSet<Employer> Employer { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
