@@ -15,7 +15,7 @@ namespace jobinjaClone.Controllers
         [Authorize(Roles = "Admin")]
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateOfficeFieldDTO requst)
+        public async Task<IActionResult> Create(CreateOfficeDTO requst)
         {
             var IsPressent = await context.OfficeFeild.AnyAsync(x => x.Name == requst.Name);
             if (IsPressent)
@@ -49,7 +49,7 @@ namespace jobinjaClone.Controllers
         [Authorize(Roles = "Admin")]
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateOfficeFieldDTO requst)
+        public async Task<IActionResult> Update(UpdateOfficeDTO requst)
         {
             var officeFeild = await context.OfficeFeild.FirstOrDefaultAsync(x => x.Id == requst.id);
             if (officeFeild == null)

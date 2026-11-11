@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-    public class UpdateOfficeFieldDTO
+    public class UpdateOfficeDTO
     {
         [Required]
         public string Name { get; set; } = null!;
