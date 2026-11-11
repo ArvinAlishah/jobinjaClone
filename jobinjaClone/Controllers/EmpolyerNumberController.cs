@@ -10,7 +10,7 @@ namespace jobinjaClone.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    public class EmployerController(ApplicationDbContext context) : ControllerBase
+    public class EmployerNumberController(ApplicationDbContext context) : ControllerBase
     {
         [Authorize(Roles = "Admin")]
 
