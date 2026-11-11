@@ -29,6 +29,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<BasicData> BasicData { get; set; }
     public DbSet<Office> Office { get; set; }
+    public DbSet<Offers> Offers { get; set; }
 
     public DbSet<OfficeFeild> OfficeFeild { get; set; }
 

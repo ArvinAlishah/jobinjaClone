@@ -1,4 +1,7 @@
-﻿namespace jobinjaClone.Entities
+﻿using jobinjaClone.Controllers;
+using jobinjaClone.Enums;
+
+namespace jobinjaClone.Entities
 {
     public class Offers : BaseEntity
     {
@@ -20,6 +23,25 @@
 
         public string AboutOffice { get; set; } = null!;
 
+
+        public int YearExpriceId { set; get; }
+
+        public YearExprience YearExprience { get; set; } = null!;
+        public int MinmumWageId { set; get; }
+
+        public Minimumwage Minimumwage { get; set; } = null!;
+
+
+        public bool GenderImportent { set; get; }
+
+        public GenderEnum Gnder {  set; get; }
+
+        public bool MilitaryStatusImportent { set; get; }
+
+        public MilitaryServiceStatusEnum military {  set; get; }
+
+
+        public OfferStatusEnum offerStatus { set; get; }
         public int EmployId { get; set; }
 
         public Employer Employer { get; set; } = null!;

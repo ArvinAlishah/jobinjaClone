@@ -7,6 +7,8 @@
         public List<Preference> Preferences { get; set; } = null!;
 
         public List<Office> office { get; set; } = null!;
+        public List<Offers> Offers { get; set; } = null!;
+
 
     }
 }

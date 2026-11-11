@@ -9,5 +9,7 @@
         public User User { get; set; } = null!;
 
         public Office Office {  get; set; }
+
+        public List<Offers> Offers { get; set; }
     }
 }
