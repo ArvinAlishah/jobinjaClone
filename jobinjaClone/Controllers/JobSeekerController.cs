@@ -619,7 +619,7 @@ namespace jobinjaClone.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddResume([FromForm] CreateProfileImageDTO request)
+        public async Task<IActionResult> AddResume([FromForm] createResumeDTO request)
         {
             var UserId = JwtHellper.GetId(User);
             var jobseeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.UserId == UserId);
@@ -650,7 +650,6 @@ namespace jobinjaClone.Controllers
             var resume = new Resume
             {
                 Url = $"Resume/{fileName}",
-                IsPublic = request.IsPublic,
                 JobSeekerId = jobseeker.Id
 
             };
@@ -774,7 +773,7 @@ namespace jobinjaClone.Controllers
             var normalazedresname = resume.Url.Replace('/', Path.DirectorySeparatorChar);
             var ProfilePath = Path.Combine(environment.WebRootPath, normalazedresname);
 
-            if (System.IO.File.Exists(ProfilePath)
+            if (System.IO.File.Exists(ProfilePath))
             {
                 System.IO.File.Delete(ProfilePath);
             }

@@ -52,6 +52,21 @@ namespace jobinjaClone.Migrations
                     b.ToTable("JobCategoriesPreference");
                 });
 
+            modelBuilder.Entity("OfficeOfficeFeild", b =>
+                {
+                    b.Property<int>("OfficeFeildId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("officeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OfficeFeildId", "officeId");
+
+                    b.HasIndex("officeId");
+
+                    b.ToTable("OfficeOfficeFeild");
+                });
+
             modelBuilder.Entity("PreferencePrefersContact", b =>
                 {
                     b.Property<int>("PreferencesId")
@@ -207,6 +222,55 @@ namespace jobinjaClone.Migrations
                     b.ToTable("Education", (string)null);
                 });
 
+            modelBuilder.Entity("jobinjaClone.Entities.EmploeyNumber", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmploeyNumber", (string)null);
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.Employer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Employer", (string)null);
+                });
+
             modelBuilder.Entity("jobinjaClone.Entities.Experience", b =>
                 {
                     b.Property<int>("Id")
@@ -339,6 +403,88 @@ namespace jobinjaClone.Migrations
                     b.ToTable("Languages", (string)null);
                 });
 
+            modelBuilder.Entity("jobinjaClone.Entities.Office", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AboutOffice")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmployNumberId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("HaveLogo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LogoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OfficeFieldId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OfficeNameEnglish")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OfficeNameFarsi")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrivateNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProvinceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SiteUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployNumberId");
+
+                    b.HasIndex("EmployerId")
+                        .IsUnique();
+
+                    b.HasIndex("ProvinceId");
+
+                    b.ToTable("Office", (string)null);
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.OfficeFeild", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OfficeFeild", (string)null);
+                });
+
             modelBuilder.Entity("jobinjaClone.Entities.Personal", b =>
                 {
                     b.Property<int>("Id")
@@ -452,7 +598,8 @@ namespace jobinjaClone.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("JobSeekerId");
+                    b.HasIndex("JobSeekerId")
+                        .IsUnique();
 
                     b.ToTable("ProfileImage", (string)null);
                 });
@@ -662,6 +809,21 @@ namespace jobinjaClone.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OfficeOfficeFeild", b =>
+                {
+                    b.HasOne("jobinjaClone.Entities.OfficeFeild", null)
+                        .WithMany()
+                        .HasForeignKey("OfficeFeildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("jobinjaClone.Entities.Office", null)
+                        .WithMany()
+                        .HasForeignKey("officeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PreferencePrefersContact", b =>
                 {
                     b.HasOne("jobinjaClone.Entities.Preference", null)
@@ -729,6 +891,17 @@ namespace jobinjaClone.Migrations
                     b.Navigation("JobSeeker");
                 });
 
+            modelBuilder.Entity("jobinjaClone.Entities.Employer", b =>
+                {
+                    b.HasOne("jobinjaClone.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("jobinjaClone.Entities.Experience", b =>
                 {
                     b.HasOne("jobinjaClone.Entities.JobSeeker", "JobSeeker")
@@ -760,6 +933,33 @@ namespace jobinjaClone.Migrations
                         .IsRequired();
 
                     b.Navigation("JobSeeker");
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.Office", b =>
+                {
+                    b.HasOne("jobinjaClone.Entities.EmploeyNumber", "EmploeyNumber")
+                        .WithMany("office")
+                        .HasForeignKey("EmployNumberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("jobinjaClone.Entities.Employer", "Employer")
+                        .WithOne("Office")
+                        .HasForeignKey("jobinjaClone.Entities.Office", "EmployerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("jobinjaClone.Entities.Province", "Province")
+                        .WithMany("office")
+                        .HasForeignKey("ProvinceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EmploeyNumber");
+
+                    b.Navigation("Employer");
+
+                    b.Navigation("Province");
                 });
 
             modelBuilder.Entity("jobinjaClone.Entities.Personal", b =>
@@ -795,8 +995,8 @@ namespace jobinjaClone.Migrations
             modelBuilder.Entity("jobinjaClone.Entities.ProfileImage", b =>
                 {
                     b.HasOne("jobinjaClone.Entities.JobSeeker", "JobSeeker")
-                        .WithMany("ProfileImages")
-                        .HasForeignKey("JobSeekerId")
+                        .WithOne("ProfileImages")
+                        .HasForeignKey("jobinjaClone.Entities.ProfileImage", "JobSeekerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -844,6 +1044,17 @@ namespace jobinjaClone.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("jobinjaClone.Entities.EmploeyNumber", b =>
+                {
+                    b.Navigation("office");
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.Employer", b =>
+                {
+                    b.Navigation("Office")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("jobinjaClone.Entities.JobSeeker", b =>
                 {
                     b.Navigation("BasicData");
@@ -868,6 +1079,8 @@ namespace jobinjaClone.Migrations
             modelBuilder.Entity("jobinjaClone.Entities.Province", b =>
                 {
                     b.Navigation("Personal");
+
+                    b.Navigation("office");
                 });
 
             modelBuilder.Entity("jobinjaClone.Entities.Role", b =>

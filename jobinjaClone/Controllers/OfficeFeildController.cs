@@ -17,17 +17,17 @@ namespace jobinjaClone.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateOfficeFieldDTO requst)
         {
-            var IsPressent = await context.Benefits.AnyAsync(x => x.Name == requst.Name);
+            var IsPressent = await context.OfficeFeild.AnyAsync(x => x.Name == requst.Name);
             if (IsPressent)
             {
                 return BadRequest("این سطح ارشدیت قبلاً ثبت شده است");
             }
 
-            var benefits = new Benefits
+            var officeFeild = new OfficeFeild
             {
                 Name = requst.Name
             };
-            context.Benefits.Add(benefits);
+            context.OfficeFeild.Add(officeFeild);
             await context.SaveChangesAsync();
             return Ok();
         }
@@ -35,28 +35,28 @@ namespace jobinjaClone.Controllers
         [HttpGet]
         public async Task<IActionResult> Getall()
         {
-            var benefits = await context.Benefits
-       .Select(x => new GetSeniorityLevelDTO
+            var officeFeild = await context.OfficeFeild
+       .Select(x => new GetOfficeFieldDTO
        {
            id = x.Id,
-           Name = x.Name
+           Name = x.Name,
        })
        .ToListAsync();
 
-            return Ok(benefits);
+            return Ok(officeFeild);
 
         }
         [Authorize(Roles = "Admin")]
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateBenefitsDTO requst)
+        public async Task<IActionResult> Update(UpdateOfficeFieldDTO requst)
         {
-            var benefits = await context.Benefits.FirstOrDefaultAsync(x => x.Id == requst.id);
-            if (benefits == null)
+            var officeFeild = await context.OfficeFeild.FirstOrDefaultAsync(x => x.Id == requst.id);
+            if (officeFeild == null)
             {
                 return BadRequest("این سطح ارشدیت قبلاً ثبت نشده است");
             }
-            benefits.Name = requst.Name;
+            officeFeild.Name = requst.Name;
             await context.SaveChangesAsync();
 
             return Ok();
@@ -66,12 +66,12 @@ namespace jobinjaClone.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var benefits = await context.Benefits.FirstOrDefaultAsync(x => x.Id == id);
-            if (benefits == null)
+            var officeFeild = await context.OfficeFeild.FirstOrDefaultAsync(x => x.Id == id);
+            if (officeFeild == null)
             {
                 return BadRequest("این سطح ارشدیت قبلاً ثبت نشده است");
             }
-            context.Benefits.Remove(benefits);
+            context.OfficeFeild.Remove(officeFeild);
             await context.SaveChangesAsync();
 
             return Ok();
