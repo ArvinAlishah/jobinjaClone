@@ -601,7 +601,7 @@ namespace jobinjaClone.Controllers
         public async Task<IActionResult> DeleteAbout()
         {
             var UserId = JwtHellper.GetId(User);
-            var jobseeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.Id == UserId);
+            var jobseeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.UserId == UserId);
             if (jobseeker == null)
             {
                 return NotFound("کارجو وجود ندارد");
@@ -666,7 +666,9 @@ namespace jobinjaClone.Controllers
         public async Task<IActionResult> DeleteResume()
         {
             var UserId = JwtHellper.GetId(User);
-            var jobseeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.Id == UserId);
+            var jobseeker = await context.JobSeekers.
+                Include(x=>x.Resume)
+                .FirstOrDefaultAsync(x => x.UserId == UserId);
             if (jobseeker == null)
             {
                 return NotFound("کارجو وجود ندارد");
