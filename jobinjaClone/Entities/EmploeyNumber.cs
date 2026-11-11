@@ -1,0 +1,7 @@
+﻿namespace jobinjaClone.Entities
+{
+    public class EmploeyNumber :BaseEntity
+    {
+        public string Number { get; set; } = null!;
+    }
+}
