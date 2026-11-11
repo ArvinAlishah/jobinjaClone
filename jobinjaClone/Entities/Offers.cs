@@ -1,5 +1,4 @@
-﻿using jobinjaClone.Controllers;
-using jobinjaClone.Enums;
+﻿using jobinjaClone.Enums;
 
 namespace jobinjaClone.Entities
 {

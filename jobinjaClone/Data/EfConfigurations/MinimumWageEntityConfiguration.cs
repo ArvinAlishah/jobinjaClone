@@ -1,5 +1,4 @@
-﻿using jobinjaClone.Controllers;
-using jobinjaClone.Entities;
+﻿using jobinjaClone.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
