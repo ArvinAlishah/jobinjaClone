@@ -21,5 +21,24 @@ namespace jobinjaClone.Entities
         public string SiteUrl { get; set; } = null!;
 
 
+        public int EmployNumberId { get; set; }
+
+        public EmploeyNumber EmploeyNumber { get; set; } = null!;
+
+        public int  OfficeField { get; set; }
+
+        public List<OfficeFeild> OfficeFeild { get; set; } = null!;
+
+
+        public int EmployerId { get; set; }
+
+
+        public Employer Employer { get; set; } = null!;
+
+
+
+      
+
+
     }
 }
