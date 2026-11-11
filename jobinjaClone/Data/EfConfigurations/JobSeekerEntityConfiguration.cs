@@ -52,8 +52,9 @@ public class JobSeekerEntityConfiguration : IEntityTypeConfiguration<JobSeeker>
                   .HasForeignKey<JobSeeker>(x => x.UserId)
                      .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(x => x.ProfileImages)
+        builder.HasOne(x => x.ProfileImages)
             .WithOne(x => x.JobSeeker)
-             .HasForeignKey(x => x.JobSeekerId);
+            .HasForeignKey<ProfileImage>(x => x.JobSeekerId);
+          
     }
 }

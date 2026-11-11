@@ -1,4 +1,6 @@
-﻿namespace jobinjaClone.DTOs.JobSeekers;
+﻿using jobinjaClone.Entities;
+
+namespace jobinjaClone.DTOs.JobSeekers;
 
 public class GetJobSeekerResponseDto
 {
@@ -14,6 +16,8 @@ public class GetJobSeekerResponseDto
 
     public PreferenceDto? Preference { get; set; }
     public ResumeDto? Resume { get; set; }
+    public ProfileImageDTO? ProfileImage { get; set; }
+
 }
 
 public class BasicDataDto
@@ -86,4 +90,9 @@ public class ResumeDto
 {
     public string? Url { get; set; }
     public bool? IsPublic { get; set; }
+
 }
+    public class ProfileImageDTO
+    {
+        public string? Url { get; set; }
+    }

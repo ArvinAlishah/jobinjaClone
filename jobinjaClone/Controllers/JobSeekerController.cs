@@ -89,6 +89,10 @@ namespace jobinjaClone.Controllers
                                             IsPublic = x.Resume.IsPublic,
                                             Url = x.Resume.Url
                                         },
+                                       ProfileImage = new()
+                                        {
+                                            Url = x.ProfileImages.Url
+                                        },
                                         Experiences = x.Experiences.Select(Experience => new ExperienceDto
                                         {
                                             CompanyName = Experience.CompanyName,
@@ -615,7 +619,7 @@ namespace jobinjaClone.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddResume([FromForm] CreateResumeDTO request)
+        public async Task<IActionResult> AddResume([FromForm] CreateProfileImageDTO request)
         {
             var UserId = JwtHellper.GetId(User);
             var jobseeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.UserId == UserId);
@@ -691,6 +695,101 @@ namespace jobinjaClone.Controllers
          
             return Ok();
         }
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddProfileImage([FromForm] CreateProfileImageDTO request)
+        {
+            var UserId = JwtHellper.GetId(User);
+            var jobseeker = await context.JobSeekers
+                .Include(x=>x.ProfileImages)
+                .FirstOrDefaultAsync(x => x.UserId == UserId);
+
+            if (jobseeker == null)
+            {
+                return NotFound("کارجو وجود ندارد");
+            }
+            if (jobseeker.ProfileImages.Url != null)
+            {
+                return BadRequest("کارجو وجود ندارد");
+            }
+            var uploadFolder = Path.Combine(environment.WebRootPath, "Profile");
+
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            if (request.File == null || request.File.Length == 0)
+            {
+                return BadRequest("فایلی ارسال نشده است.");
+            }
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(request.File.FileName)}";
+
+            var filePath = Path.Combine(uploadFolder, fileName);
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            await request.File.CopyToAsync(stream);
+
+
+            var resume = new Resume
+            {
+                Url = $"Profile/{fileName}",
+                JobSeekerId = jobseeker.Id
+
+            };
+
+            context.Resumes.Add(resume);
+            await context.SaveChangesAsync();
+
+
+            return Created($"api/Profile/{resume.Id}", new
+            {
+                Id = resume.Id
+            });
+        }
+
+        [HttpDelete]
+
+        public async Task<IActionResult> DeleteProfileImage()
+        {
+            var UserId = JwtHellper.GetId(User);
+            var jobseeker = await context.JobSeekers.
+                Include(x => x.ProfileImages)
+                .FirstOrDefaultAsync(x => x.UserId == UserId);
+            if (jobseeker == null)
+            {
+                return NotFound("کارجو وجود ندارد");
+            }
+            var resume = await context.Resumes.FirstOrDefaultAsync(x => x.Id == jobseeker.ProfileImages.Id);
+            if (resume == null)
+            {
+                return NotFound();
+            }
+            context.Remove(resume);
+            await context.SaveChangesAsync();
+
+            var normalazedresname = resume.Url.Replace('/', Path.DirectorySeparatorChar);
+            var ProfilePath = Path.Combine(environment.WebRootPath, normalazedresname);
+
+            if (System.IO.File.Exists(ProfilePath)
+            {
+                System.IO.File.Delete(ProfilePath);
+            }
+
+            return Ok();
+        }
+
+
+
+
+
+
+
+
+
 
 
     }

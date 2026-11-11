@@ -18,12 +18,13 @@
 
         public List<Education> Education { get; set; } = new();
 
-        public List<ProfileImage> ProfileImages { get; set; } = new();
+        public ProfileImage? ProfileImages { get; set; } 
 
         public Preference? Preference { get; set; }
 
         public List<Language> Languages { get; set; } = new();
 
         public Resume? Resume { get; set; }
+         
     }
 }

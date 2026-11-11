@@ -2,7 +2,7 @@
 
 namespace jobinjaClone.DTOs.Resume
 {
-    public class CreateResumeDTO
+    public class CreateProfileImageDTO
     {
         [Required]
 
