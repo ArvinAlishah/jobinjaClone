@@ -59,7 +59,7 @@ LastName = x.LastName,
             await context.SaveChangesAsync();
 
 
-            return Ok(});
+            return Ok();
         }
     }
 }

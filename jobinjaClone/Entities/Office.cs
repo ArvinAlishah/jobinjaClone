@@ -25,7 +25,6 @@ namespace jobinjaClone.Entities
 
         public EmploeyNumber EmploeyNumber { get; set; } = null!;
 
-        public int  OfficeFieldId { get; set; }
 
         public List<OfficeFeild> OfficeFeild { get; set; } = null!;
 

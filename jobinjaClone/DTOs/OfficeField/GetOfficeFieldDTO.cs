@@ -1,5 +1,5 @@
 ﻿
-    public class GetOfficeDTO
+    public class GetOfficeFeildDTO
     {
         public int id { get; set; } 
 

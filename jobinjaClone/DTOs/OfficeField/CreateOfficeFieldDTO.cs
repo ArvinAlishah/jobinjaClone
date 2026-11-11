@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-    public class CreateOfficeDTO
+    public class CreateOfficeFeildDTO
     {
         [Required]
         [MaxLength(50)]

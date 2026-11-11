@@ -5,7 +5,7 @@ namespace jobinjaClone.DTOs.Office
 
 
 
-    public class OfficeDTO
+    public class GetOfficeDTO
     {
         public string OfficeNameFarsi { get; set; } = null!;
 

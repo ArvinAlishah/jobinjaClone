@@ -431,9 +431,6 @@ namespace jobinjaClone.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OfficeFieldId")
-                        .HasColumnType("int");
-
                     b.Property<string>("OfficeNameEnglish")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
