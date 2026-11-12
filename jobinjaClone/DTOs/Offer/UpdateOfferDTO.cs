@@ -8,8 +8,9 @@ namespace jobinjaClone.DTOs.Offer
              public string title { get; set; } = null!;
             public int PrefersContact { get; set; }
 
+        public GenderEnum gender { get; set; }
 
-            public int Province { get; set; }
+        public int Province { get; set; }
 
             public int JobCategories { get; set; }
 

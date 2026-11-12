@@ -112,26 +112,6 @@ namespace jobinjaClone.Migrations
                     b.ToTable("PreferenceSeniorityLevel");
                 });
 
-            modelBuilder.Entity("jobinjaClone.Controllers.Minimumwage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("minimum")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Minimumwage", (string)null);
-                });
-
             modelBuilder.Entity("jobinjaClone.Entities.BasicData", b =>
                 {
                     b.Property<int>("Id")
@@ -421,6 +401,26 @@ namespace jobinjaClone.Migrations
                     b.HasIndex("JobSeekerId");
 
                     b.ToTable("Languages", (string)null);
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.Minimumwage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("minimum")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Minimumwage", (string)null);
                 });
 
             modelBuilder.Entity("jobinjaClone.Entities.Offers", b =>
@@ -1063,7 +1063,7 @@ namespace jobinjaClone.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("jobinjaClone.Controllers.Minimumwage", "Minimumwage")
+                    b.HasOne("jobinjaClone.Entities.Minimumwage", "Minimumwage")
                         .WithMany("Offers")
                         .HasForeignKey("MinmumWageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1209,11 +1209,6 @@ namespace jobinjaClone.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("jobinjaClone.Controllers.Minimumwage", b =>
-                {
-                    b.Navigation("Offers");
-                });
-
             modelBuilder.Entity("jobinjaClone.Entities.EmploeyNumber", b =>
                 {
                     b.Navigation("office");
@@ -1251,6 +1246,11 @@ namespace jobinjaClone.Migrations
                     b.Navigation("Resume");
 
                     b.Navigation("Skills");
+                });
+
+            modelBuilder.Entity("jobinjaClone.Entities.Minimumwage", b =>
+                {
+                    b.Navigation("Offers");
                 });
 
             modelBuilder.Entity("jobinjaClone.Entities.PrefersContact", b =>

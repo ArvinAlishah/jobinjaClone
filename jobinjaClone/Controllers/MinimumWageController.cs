@@ -36,10 +36,10 @@ namespace jobinjaClone.Controllers
         public async Task<IActionResult> Getall()
         {
             var minimum = await context.Minimumwage
-       .Select(x => new Minimumwage
+       .Select(x => new GetMinimumwageDTO
        {
-           Id = x.Id,
-           minimum = x.minimum
+           id = x.Id,
+           Minimumwage = x.minimum
        })
        .ToListAsync();
 
