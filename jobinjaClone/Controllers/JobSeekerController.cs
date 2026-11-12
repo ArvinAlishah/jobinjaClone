@@ -109,7 +109,7 @@ namespace jobinjaClone.Controllers
                                         {
                                             Degree = Educat.Degree.ToString(),
                                             Description = Educat.Description,
-                                            EndYear = Educat.Description,
+                                            EndYear = Educat.EndYear,
                                             FieldName = Educat.FieldName,
                                             Id = Educat.Id,
                                             InstituteName = Educat.InstituteName,
@@ -132,7 +132,7 @@ namespace jobinjaClone.Controllers
                                         Preference = new()
                                         {
                                             Benefits = x.Preference.Benefits.Select(b => b.Name).ToList(),
-                                            SeniorityLevel = x.Preference.Benefits.Select(b => b.Name).ToList(),
+                                            SeniorityLevel = x.Preference.SeniorityLevel.Select(b => b.Name).ToList(),
                                             ExpectedSalary = x.Preference.ExpectedSalary,
                                             JobCategories = x.Preference.JobCategories.Select(b => b.Name).ToList(),
                                             PrefersContact = x.Preference.PrefersContact.Select(b => b.Name).ToList(),
@@ -234,6 +234,14 @@ namespace jobinjaClone.Controllers
 
             if (jobSeeker.Preference == null)
             {
+                jobSeeker.Preference = new Preference
+                {
+                    JobSeekerId = jobSeeker.Id
+                };
+            }else
+            {
+                var prefrence = await context.Preferences.FirstOrDefaultAsync(x => x.JobSeekerId == jobSeeker.Id);
+                context.Preferences.Remove(prefrence);
                 jobSeeker.Preference = new Preference
                 {
                     JobSeekerId = jobSeeker.Id
@@ -447,7 +455,7 @@ namespace jobinjaClone.Controllers
             {
                 return NotFound("مهارت پیدا نشد");
             }
-            jobSeeker.Experiences.Remove(experiences);
+            context.Remove(experiences);
 
             await context.SaveChangesAsync();
 
@@ -514,7 +522,7 @@ namespace jobinjaClone.Controllers
             {
                 return NotFound("مهارت پیدا نشد");
             }
-            jobSeeker.Education.Remove(education);
+            context.Remove(education);
 
             await context.SaveChangesAsync();
 
@@ -530,7 +538,7 @@ namespace jobinjaClone.Controllers
                 .Include(x => x.Languages)
                 .FirstOrDefaultAsync(x => x.UserId == userId);
             var isperessent = await context.Languages
-               .AnyAsync(x => x.Name == request.Name);
+               .AnyAsync(x => x.Name == request.Name && x.JobSeekerId == jobSeeker.Id);
 
             if (isperessent)
             {
@@ -578,7 +586,7 @@ namespace jobinjaClone.Controllers
             {
                 return NotFound("مهارت پیدا نشد");
             }
-            jobSeeker.Languages.Remove(language);
+            context.Remove(language);
 
             await context.SaveChangesAsync();
 
@@ -622,12 +630,19 @@ namespace jobinjaClone.Controllers
         public async Task<IActionResult> AddResume([FromForm] createResumeDTO request)
         {
             var UserId = JwtHellper.GetId(User);
-            var jobseeker = await context.JobSeekers.FirstOrDefaultAsync(x => x.UserId == UserId);
+            var jobseeker = await context.JobSeekers.
+                Include(x=>x.Resume)
+                .FirstOrDefaultAsync(x => x.UserId == UserId);
 
             if (jobseeker == null)
             {
                 return NotFound("کارجو وجود ندارد");
             }
+            if(jobseeker.Resume.Url !=null)
+            {
+                return BadRequest("رزومه ازقبل موجود است");
+            }
+            
             var uploadFolder = Path.Combine(environment.WebRootPath, "Resume");
 
             if (!Directory.Exists(uploadFolder))
@@ -650,7 +665,8 @@ namespace jobinjaClone.Controllers
             var resume = new Resume
             {
                 Url = $"Resume/{fileName}",
-                JobSeekerId = jobseeker.Id
+                JobSeekerId = jobseeker.Id,
+                IsPublic = request.IsPublic
 
             };
 
@@ -712,7 +728,7 @@ namespace jobinjaClone.Controllers
             }
             if (jobseeker.ProfileImages.Url != null)
             {
-                return BadRequest("کارجو وجود ندارد");
+                return BadRequest("عکس پروفایل از قبل ثبت شده است");
             }
             var uploadFolder = Path.Combine(environment.WebRootPath, "Profile");
 
@@ -733,20 +749,20 @@ namespace jobinjaClone.Controllers
             await request.File.CopyToAsync(stream);
 
 
-            var resume = new Resume
+            var profile = new ProfileImage
             {
                 Url = $"Profile/{fileName}",
                 JobSeekerId = jobseeker.Id
 
             };
 
-            context.Resumes.Add(resume);
+            context.ProfileImage.Add(profile);
             await context.SaveChangesAsync();
 
 
-            return Created($"api/Profile/{resume.Id}", new
+            return Created($"api/Profile/{profile.Id}", new
             {
-                Id = resume.Id
+                Id = profile.Id
             });
         }
 
@@ -762,15 +778,15 @@ namespace jobinjaClone.Controllers
             {
                 return NotFound("کارجو وجود ندارد");
             }
-            var resume = await context.Resumes.FirstOrDefaultAsync(x => x.Id == jobseeker.ProfileImages.Id);
-            if (resume == null)
+            var profile = await context.ProfileImage.FirstOrDefaultAsync(x => x.Id == jobseeker.ProfileImages.Id);
+            if (profile == null)
             {
                 return NotFound();
             }
-            context.Remove(resume);
+            context.Remove(profile);
             await context.SaveChangesAsync();
 
-            var normalazedresname = resume.Url.Replace('/', Path.DirectorySeparatorChar);
+            var normalazedresname = profile.Url.Replace('/', Path.DirectorySeparatorChar);
             var ProfilePath = Path.Combine(environment.WebRootPath, normalazedresname);
 
             if (System.IO.File.Exists(ProfilePath))

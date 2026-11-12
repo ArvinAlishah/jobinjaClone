@@ -1,8 +1,8 @@
 ﻿using jobinjaClone.Data;
-using jobinjaClone.Entities;
-
 using jobinjaClone.DTOs.Office;
+using jobinjaClone.Entities;
 using jobinjaClone.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +11,7 @@ using System.Collections.Immutable;
 
 namespace jobinjaClone.Controllers
 {
+    [Authorize(Roles = "Employer")]
     [Route("api/[controller]")]
     [ApiController]
     public class OfficeController(ApplicationDbContext context , IWebHostEnvironment environment) : ControllerBase
@@ -24,12 +25,12 @@ namespace jobinjaClone.Controllers
                   .Where(x => x.Employer.UserId == UserId)
                   .AnyAsync();
 
-            if(Office == null)
+            if(!Office)
             {
                 return NotFound("شرکت پیدا نشد");
             }
 
-            var office = await context.Office.
+            var tempoffice = await context.Office.
                   Include(x => x.Employer)
                   .Where(x => x.Employer.UserId == UserId)
                   .Select( x => new GetOfficeDTO
@@ -63,7 +64,7 @@ namespace jobinjaClone.Controllers
 
 
 
-            return Ok(office);
+            return Ok(tempoffice);
         }
 
         [HttpPut]
@@ -72,6 +73,7 @@ namespace jobinjaClone.Controllers
             int UserId = JwtHellper.GetId(User);
 
             var Office = await context.Office.Include(x=> x.Employer)
+                                   .Include(x=>x.OfficeFeild)
                                   .Where(x => x.Employer.UserId == UserId)
                                   .FirstOrDefaultAsync();
             var employer = await context.Employer.FirstOrDefaultAsync(x=>x.UserId == UserId);
@@ -120,6 +122,7 @@ namespace jobinjaClone.Controllers
             {
                 Office.OfficeFeild = new List<OfficeFeild>();
             }
+            Office.OfficeFeild.Clear();
             foreach(var OfficeFeildId in request.OfficeFeildId)
             {
                 var officeFeild = await context.OfficeFeild.Where(x=>x.Id  == OfficeFeildId)
@@ -130,7 +133,6 @@ namespace jobinjaClone.Controllers
                     return NotFound("فیلد مورد نظر وجود ندارد");
 
                 }
-                
                 Office.OfficeFeild.Add(officeFeild);
 
             }
@@ -141,7 +143,10 @@ namespace jobinjaClone.Controllers
             Office.OfficeNameFarsi = request.OfficeNameFarsi;
             Office.PrivateNumber =request.PrivateNumber;
             Office.OfficeNameEnglish = request.OfficeNameEnglish;
-            context.Office.Add(Office);
+            if (Office.Id == 0)                 
+            {
+                context.Office.Add(Office);
+            }
             await context.SaveChangesAsync();
             return Ok();
         }

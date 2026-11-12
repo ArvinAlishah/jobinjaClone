@@ -35,6 +35,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<EmploeyNumber> EmploeyNumber { get; set; }
     public DbSet<Employer> Employer { get; set; }
+    public DbSet<YearExprience> YearExprience { get; set; }
+    public DbSet<Minimumwage> Minimumwage { get; set; }
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
