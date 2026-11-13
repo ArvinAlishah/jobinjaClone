@@ -38,6 +38,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<YearExprience> YearExprience { get; set; }
     public DbSet<Minimumwage> Minimumwage { get; set; }
 
+    public DbSet<ResumeFolder> ResumeFolder { get; set; }
+    public DbSet<JobApplication> JobApplication { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

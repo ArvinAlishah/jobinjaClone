@@ -31,7 +31,7 @@ namespace jobinjaClone.Controllers
             await context.SaveChangesAsync();
             return Ok();
         }
-        [Authorize(Roles = "Admin,JobSeeker")]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Getall()
         {

@@ -8,8 +8,12 @@
         public int UserId { get; set; }
         public User User { get; set; } = null!;
 
-        public Office Office {  get; set; }
+        public Office? Office {  get; set; }
 
-        public List<Offers> Offers { get; set; }
+        public List<Offers>? Offers { get; set; } 
+
+
+        public ResumeFolder? ResumeFolder {  get; set; } 
+
     }
 }
