@@ -9,19 +9,19 @@ namespace jobinjaClone.DTOs.Search
 
         [Required]
 
-        public int isprovincefillter { get; set; }
+        public bool isprovincefillter { get; set; }
         public int provincefillterid { get; set; }
         [Required]
 
-        public int isJobCategorize { get; set; }
+        public bool isJobCategorize { get; set; }
         public int JobCategorizeId { get; set; }
         [Required]
 
-        public int isPrefersContact { get; set; }
+        public bool isPrefersContact { get; set; }
         public int PrefersContactId { get; set; }
         [Required]
 
-        public int isMinimumWage { get; set; }
+        public bool isMinimumWage { get; set; }
         public int MinimumWageId { get; set; }
 
 

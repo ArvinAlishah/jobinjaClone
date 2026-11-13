@@ -14,7 +14,6 @@ namespace jobinjaClone.Data.EfConfigurations
                 .HasForeignKey<ResumeFolder>(x => x.EmployerId);
 
 
-            builder.HasMany(x => x.resume);
 
 
         }
